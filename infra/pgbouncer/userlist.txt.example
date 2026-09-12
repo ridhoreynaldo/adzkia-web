@@ -1,0 +1,14 @@
+; Daftar pengguna PgBouncer — SALIN menjadi `userlist.txt`, JANGAN commit yang asli.
+;
+; Isinya BUKAN kata sandi polos, melainkan verifier SCRAM yang sama persis
+; dengan yang disimpan PostgreSQL. Ambil dengan:
+;
+;     psql -U postgres -d adzkia -Atc \
+;       "SELECT '\"' || rolname || '\" \"' || rolpassword || '\"' \
+;          FROM pg_authid WHERE rolname = 'adzkia'"
+;
+; Keluarannya sudah berbentuk satu baris yang siap ditempel di bawah.
+; Kalau `rolpassword` masih diawali `md5`, ganti dulu sandinya sesudah
+; `password_encryption = scram-sha-256` berlaku.
+
+"adzkia" "SCRAM-SHA-256$4096:GANTI_DENGAN_VERIFIER_ASLI"

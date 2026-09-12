@@ -1,0 +1,44 @@
+FOTO KAMPUS UNTUK LATAR BERGILIR HALAMAN AWAL
+=============================================
+
+KEADAAN SEKARANG (27 Agustus 2026)
+----------------------------------
+Sembilan foto sudah terpasang. SATU masih kosong:
+
+  [ADA]    ui.jpg                  Universitas Indonesia              (UTBK)
+  [ADA]    pkn-stan.jpg            Politeknik Keuangan Negara STAN    (Kedinasan)
+  [ADA]    itb.jpg                 Institut Teknologi Bandung         (UTBK)
+  [ADA]    ipdn.jpg                Institut Pemerintahan Dalam Negeri (Kedinasan)
+  [ADA]    ugm.jpg                 Universitas Gadjah Mada            (UTBK)
+  [ADA]    stis.jpg                Politeknik Statistika STIS         (Kedinasan)
+  [ADA]    ipb.jpg                 Institut Pertanian Bogor           (UTBK)
+  [KOSONG] poltekip-poltekim.jpg   Poltekip & Poltekim                (Kedinasan)
+  [ADA]    its.jpg                 Institut Teknologi Sepuluh Nopember(UTBK)
+  [ADA]    stmkg.jpg               STMKG                              (Kedinasan)
+
+Dari sepuluh berkas yang dikirim, dua di antaranya sama-sama foto ITS (gedung
+rektorat dan tugu depan kampus), sehingga Poltekip & Poltekim belum kebagian.
+Yang dipakai untuk ITS adalah foto gedung rektoratnya karena resolusinya paling
+tinggi. Selama poltekip-poltekim.jpg belum ada, slide itu tampil sebagai gradasi
+biru tua berisi tulisan "POLTEKIP & POLTEKIM" dan situs tetap berjalan normal.
+
+CARA MENAMBAH ATAU MENGGANTI FOTO
+---------------------------------
+Taruh berkas di folder ini dengan nama PERSIS seperti daftar di atas. Begitu
+berkasnya ada, foto langsung dipakai tanpa perlu mengubah kode apa pun.
+
+SARAN TEKNIS
+------------
+- Bentuk melebar (landscape). Semua foto yang sudah ada sudah diseragamkan
+  ke 1600 x 900 piksel dengan ukuran berkas 109-244 KB.
+- Kalau mengirim foto baru berukuran besar, kecilkan dulu ke lebar 1600 piksel
+  supaya halaman tetap ringan dibuka lewat HP siswa.
+- Format .jpg. Kalau memakai .png atau .webp, namanya harus diubah juga di
+  berkas src/components/landing/SlideKampus.tsx (kolom `berkas`).
+- Pilih foto gedung atau gerbang yang ikonik dan tidak terlalu ramai di sisi
+  kiri, karena tulisan sampul berada di sebelah kiri.
+
+HAK CIPTA
+---------
+Pastikan foto yang dipakai memang boleh dipakai: foto dokumentasi sekolah
+sendiri, foto milik kampus yang sudah diizinkan, atau foto berlisensi bebas.

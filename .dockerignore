@@ -1,0 +1,32 @@
+# Yang tidak boleh ikut ke dalam citra.
+
+node_modules
+.next
+.next-uji
+.git
+.gitignore
+
+# Basis data SQLite lama beserta seluruh cadangannya — inilah yang sedang
+# ditinggalkan. Ikut tersalin berarti citra membengkak puluhan megabita oleh
+# data yang tidak akan pernah dibaca.
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# Berkas unggahan datang lewat volume saat jalan, bukan lewat citra.
+data/ielts-audio
+public/soal
+public/peserta
+public/warung
+
+# Rahasia. Nilainya diberikan docker compose lewat environment.
+.env
+.env.local
+.env.*.local
+
+# Perkakas & keluaran pengembangan
+.cek-*
+keluaran
+*.log
+*.tar.gz
+.claude

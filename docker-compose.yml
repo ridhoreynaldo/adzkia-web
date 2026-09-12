@@ -1,0 +1,170 @@
+# ============================================================
+# ADZKIA SMART — lingkungan PostgreSQL + Redis + Next.js
+#
+#   docker compose up -d db cache     # basis data saja, untuk pengembangan
+#   docker compose up -d              # lengkap dengan aplikasinya
+#   docker compose logs -f app
+#   docker compose down               # berhenti, DATA TETAP AMAN di volume
+#   docker compose down -v            # berhenti DAN HAPUS SELURUH DATA
+#
+# Salin `.env.example` menjadi `.env` lebih dulu — berkas ini membacanya.
+# ============================================================
+
+name: adzkia-smart
+
+services:
+  # ----------------------------------------------------------
+  # PostgreSQL
+  # ----------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: adzkia-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-adzkia}
+      POSTGRES_USER: ${POSTGRES_USER:-adzkia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD wajib diisi di .env}
+      # Encoding dikunci UTF8 — nama siswa dan naskah soal memuat huruf beraksen
+      # dan tanda kutip tipografis. Locale dibiarkan bawaan (C): urutan ORDER BY
+      # jadi urutan byte, yang untuk nama Indonesia sama saja dengan alfabet,
+      # dan indeksnya lebih cepat daripada locale penuh.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+      # Hanya memengaruhi tampilan di psql. Data tetap disimpan timestamptz,
+      # yang tidak bergantung zona server.
+      TZ: Asia/Jakarta
+      PGTZ: Asia/Jakarta
+
+    # Berkas .sql di folder ini dijalankan SEKALI, saat volume masih kosong.
+    # Menjalankan ulang setelah ada data TIDAK akan memuatnya lagi — itu
+    # disengaja Postgres, dan menyelamatkan kita dari menimpa data sungguhan.
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db:/docker-entrypoint-initdb.d:ro
+
+    # Port hanya dibuka ke komputer sendiri (127.0.0.1), bukan ke jaringan.
+    # Basis data tidak punya alasan bisa dihubungi dari luar laptop.
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5432}:5432"
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-adzkia} -d ${POSTGRES_DB:-adzkia}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+    # Penyetelan untuk beban ADZKIA SMART: banyak pembaca, sedikit penulis,
+    # basis data kecil (di bawah 100 MB) sehingga muat seluruhnya di memori.
+    command:
+      - postgres
+      - -c
+      - shared_buffers=256MB
+      - -c
+      - effective_cache_size=768MB
+      - -c
+      - work_mem=8MB
+      - -c
+      - max_connections=100
+      # Merekam query yang lebih lambat dari 200 ms. Inilah bahan mentah
+      # penyetelan: tanpa catatan ini, "query mana yang lambat" cuma tebakan.
+      - -c
+      - log_min_duration_statement=200
+      - -c
+      - track_io_timing=on
+
+  # ----------------------------------------------------------
+  # Redis — MURNI CACHE
+  # ----------------------------------------------------------
+  #
+  # Tidak ada persistensi: tidak ada AOF, tidak ada snapshot RDB. Isinya boleh
+  # hilang kapan saja tanpa satu pun data sekolah ikut hilang, karena seluruh
+  # kebenaran tetap tinggal di PostgreSQL. Kalau kelak Redis dipakai menyimpan
+  # sesi login atau antrean, sifat ini HARUS ditinjau ulang.
+  #
+  # maxmemory + allkeys-lru membuatnya membuang entri terlama sendiri saat
+  # penuh, alih-alih menolak penulisan baru.
+  cache:
+    image: redis:7-alpine
+    container_name: adzkia-cache
+    restart: unless-stopped
+
+    command:
+      - redis-server
+      - --requirepass
+      - ${REDIS_PASSWORD:?REDIS_PASSWORD wajib diisi di .env}
+      - --maxmemory
+      - ${REDIS_MAXMEMORY:-256mb}
+      - --maxmemory-policy
+      - allkeys-lru
+      - --save
+      - ""
+      - --appendonly
+      - "no"
+
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-6379}:6379"
+
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+  # ----------------------------------------------------------
+  # Aplikasi Next.js
+  # ----------------------------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: adzkia-app
+    restart: unless-stopped
+
+    # Menunggu KEDUANYA benar-benar siap melayani, bukan sekadar hidup.
+    # Tanpa `condition: service_healthy`, aplikasi menyala lebih dulu lalu
+    # gagal menyambung, dan Postgres yang masih memuat berkas init disalahkan.
+    depends_on:
+      db:
+        condition: service_healthy
+      cache:
+        condition: service_healthy
+
+    environment:
+      NODE_ENV: production
+      TZ: Asia/Jakarta
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      DATABASE_URL: postgres://${POSTGRES_USER:-adzkia}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-adzkia}
+      REDIS_URL: redis://:${REDIS_PASSWORD}@cache:6379
+      ADZKIA_SECRET: ${ADZKIA_SECRET:?ADZKIA_SECRET wajib diisi di .env}
+      ADZKIA_COOKIE_SECURE: ${ADZKIA_COOKIE_SECURE:-}
+      ADZKIA_LANGUAGE_SKILLS: ${ADZKIA_LANGUAGE_SKILLS:-}
+
+    ports:
+      - "${APP_PORT:-3000}:3000"
+
+    # Berkas yang DIUNGGAH pengguna, bukan bagian dari kode. Tanpa volume ini,
+    # rekaman Listening, gambar soal, dan foto peserta hilang setiap kali
+    # citra dibangun ulang.
+    volumes:
+      - audio:/app/data/ielts-audio
+      - soal:/app/public/soal
+      - peserta:/app/public/peserta
+      - warung:/app/public/warung
+
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/sehat || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+volumes:
+  pgdata:
+  audio:
+  soal:
+  peserta:
+  warung:

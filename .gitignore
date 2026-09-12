@@ -1,0 +1,80 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/.next-uji/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# Database SQLite lokal
+/data
+*.db
+*.db-wal
+*.db-shm
+
+# Berkas kerja yang dibuat perkakas, seluruhnya di bawah SATU folder.
+#
+# Pemeriksa `npm run cek:*` menyalin src/lib ke `.tmp/cek/<nama>` sebelum
+# menjalankannya. Salinannya harus berada DI DALAM proyek supaya `node_modules`
+# tetap terjangkau — itulah sebabnya ia tidak memakai folder sementara milik
+# sistem operasi. Yang bisa dilakukan hanyalah menaruhnya di satu tempat,
+# bukan berserak sebagai 22 folder `.cek-*` di akar proyek.
+.tmp/
+
+# ---- ADZKIA SMART versi PostgreSQL ----
+# Sandi sungguhan. Contohnya ada di .env.example.
+.env
+
+# Basis data SQLite lama - tidak dipakai lagi di folder ini.
+data/*.db
+data/*.db-wal
+data/*.db-shm
+
+# Berkas yang diunggah pengguna saat aplikasi berjalan.
+data/ielts-audio
+public/soal
+public/peserta
+public/warung
+
+
+# Cermin struktur produksi (data, rahasia, cadangan, log) — lihat scripts/siapkan-struktur.mjs
+.lokal/
+
+# Catatan keluaran server saat pengujian lokal.
+*.log
+userlist.lokal.txt

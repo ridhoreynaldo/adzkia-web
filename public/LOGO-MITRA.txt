@@ -1,0 +1,23 @@
+LOGO SMA ISLAM PLUS ADZKIA + ADZKIA KEDINASAN
+=============================================
+
+SUDAH TERPASANG (27 Agustus 2026).
+
+Berkas    : public/logo-mitra.png  (978 x 200 piksel, 27 KB, latar transparan)
+Sumber    : D:/COREL/HASIL/LOGO ADZKIA DAN KEDINASAN.png (3406 x 696, 410 KB)
+Perlakuan : bidang kosong di tepinya dipangkas, lalu diperkecil ke tinggi 200
+            piksel supaya tetap tajam di layar ber-DPI tinggi tetapi ringan.
+
+Tampil di sudut kiri atas HALAMAN AWAL, berdampingan dengan tulisan ADZKIA
+SMART, dialasi bidang putih membulat karena sampulnya berlatar foto gelap.
+Disembunyikan pada layar sempit (di bawah 640 piksel) supaya header di HP tidak
+berdesakan.
+
+CARA MENGGANTI
+--------------
+Timpa berkas public/logo-mitra.png dengan yang baru, nama harus tetap sama.
+Kalau memakai .jpg atau .webp, namanya juga harus diubah di berkas
+src/components/landing/LogoMitra.tsx.
+
+Kalau berkasnya dihapus, bagian itu otomatis tidak menampilkan apa-apa —
+header tetap rapi, tidak ada ikon gambar rusak.

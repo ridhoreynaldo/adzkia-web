@@ -1,0 +1,224 @@
+# ============================================================
+# ADZKIA SMART — susunan PRODUKSI
+#
+#     Internet → Nginx (di host) → app ×3 → PgBouncer → PostgreSQL
+#                                     ↘ Redis
+#
+# BEDANYA DENGAN `docker-compose.yml` DI AKAR PROYEK — yang itu untuk
+# PENGEMBANGAN dan sengaja dibiarkan sederhana:
+#
+#   · PgBouncer berdiri di antara aplikasi dan PostgreSQL;
+#   · aplikasi dijalankan BEBERAPA proses, bukan satu;
+#   · seluruh berkas yang diunggah pengguna memakai bind mount ke
+#     /srv/adzkia/data, bukan volume Docker bernama — supaya bisa dicadangkan
+#     dan dilihat dengan perkakas biasa;
+#   · rahasia dibaca dari /srv/adzkia/rahasia/.env, di luar repositori.
+#
+# Menjalankan (dari /srv/adzkia/infra):
+#     docker compose -f docker-compose.prod.yml --env-file ../rahasia/.env up -d
+# ============================================================
+
+name: adzkia-prod
+
+services:
+  # ----------------------------------------------------------
+  # PostgreSQL — sumber kebenaran
+  # ----------------------------------------------------------
+  db:
+    image: postgres:16-alpine
+    container_name: adzkia-db
+    restart: unless-stopped
+    shm_size: 256mb
+
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-adzkia}
+      POSTGRES_USER: ${POSTGRES_USER:-adzkia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD wajib diisi}
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8"
+      TZ: Asia/Jakarta
+      PGTZ: Asia/Jakarta
+
+    volumes:
+      - /srv/adzkia/data/postgres:/var/lib/postgresql/data
+      # Dijalankan SEKALI, saat folder data masih kosong.
+      - ../db:/docker-entrypoint-initdb.d:ro
+      - ./postgres/postgresql.tuning.conf:/etc/postgresql/tuning.conf:ro
+
+    # PORT TIDAK DIBUKA KE JARINGAN. Aplikasi menyambung lewat PgBouncer;
+    # yang butuh koneksi langsung (ekspor berat, pencadangan, psql pengelola)
+    # masuk lewat 127.0.0.1 dari dalam VPS.
+    ports:
+      - "127.0.0.1:5432:5432"
+
+    command:
+      - postgres
+      - -c
+      - config_file=/etc/postgresql/tuning.conf
+      - -c
+      - hba_file=/var/lib/postgresql/data/pg_hba.conf
+      - -c
+      - ident_file=/var/lib/postgresql/data/pg_ident.conf
+      - -c
+      - data_directory=/var/lib/postgresql/data
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-adzkia} -d ${POSTGRES_DB:-adzkia}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  # ----------------------------------------------------------
+  # PgBouncer — penjaga jumlah koneksi
+  # ----------------------------------------------------------
+  #
+  # Baca infra/pgbouncer/pgbouncer.ini untuk alasan tiap angkanya. Ringkasnya:
+  # ribuan peserta boleh menempel di sini, tetapi PostgreSQL tidak pernah
+  # melihat lebih dari 90 koneksi.
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: adzkia-pgbouncer
+    restart: unless-stopped
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    volumes:
+      - ./pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini:ro
+      - /srv/adzkia/rahasia/pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt:ro
+
+    ports:
+      - "127.0.0.1:6432:6432"
+
+    healthcheck:
+      # `SHOW VERSION` lewat konsol pgbouncer membuktikan ia benar-benar
+      # menjawab protokol PostgreSQL, bukan sekadar portnya terbuka.
+      test: ["CMD-SHELL", "PGPASSWORD=$$POSTGRES_PASSWORD psql -h 127.0.0.1 -p 6432 -U $${POSTGRES_USER:-adzkia} -d pgbouncer -tAc 'SHOW VERSION' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-adzkia}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+  # ----------------------------------------------------------
+  # Redis — murni cache
+  # ----------------------------------------------------------
+  cache:
+    image: redis:7-alpine
+    container_name: adzkia-cache
+    restart: unless-stopped
+
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+
+    command:
+      - redis-server
+      - /usr/local/etc/redis/redis.conf
+      - --requirepass
+      - ${REDIS_PASSWORD:?REDIS_PASSWORD wajib diisi}
+
+    ports:
+      - "127.0.0.1:6379:6379"
+
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" ping | grep -q PONG"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  # ----------------------------------------------------------
+  # Aplikasi — TIGA proses
+  # ----------------------------------------------------------
+  #
+  # Node menjalankan JavaScript di SATU utas. Pada VPS 4 inti, satu proses
+  # aplikasi berarti tiga perempat mesinnya menganggur sementara satu inti
+  # menjadi leher botol — dan pada 10.000 peserta, leher botol itulah yang
+  # menentukan, bukan PostgreSQL. Tiga proses menyisakan satu inti untuk
+  # Nginx, PgBouncer, dan PostgreSQL.
+  #
+  # Nginx menyebar beban di antara ketiganya (`least_conn`); lihat
+  # infra/nginx/conf.d/adzkia.conf.
+  app: &app
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    image: adzkia-smart:prod
+    container_name: adzkia-app-1
+    restart: unless-stopped
+
+    depends_on:
+      pgbouncer:
+        condition: service_started
+      cache:
+        condition: service_healthy
+
+    environment: &app-env
+      NODE_ENV: production
+      TZ: Asia/Jakarta
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+
+      # LEWAT PGBOUNCER (6432), BUKAN LANGSUNG KE POSTGRESQL (5432).
+      DATABASE_URL: postgres://${POSTGRES_USER:-adzkia}:${POSTGRES_PASSWORD}@pgbouncer:6432/${POSTGRES_DB:-adzkia}
+
+      # Menyalakan dua penyesuaian di src/lib/db.ts yang WAJIB saat di belakang
+      # PgBouncer — terutama: zona waktu TIDAK dikirim sebagai parameter
+      # pembuka sambungan, karena PgBouncer menolaknya dan koneksinya gagal
+      # sama sekali. Zona dipasang di sisi server:
+      #     ALTER DATABASE adzkia SET timezone = 'Asia/Jakarta';
+      PGBOUNCER: "1"
+
+      # Pool per PROSES aplikasi. 25 x 3 proses = 75 koneksi klien ke
+      # PgBouncer, yang meringkasnya menjadi paling banyak 40 koneksi
+      # PostgreSQL. Angka ini boleh naik tanpa menyentuh PostgreSQL sama
+      # sekali — itulah gunanya PgBouncer.
+      PGPOOL_MAX: "25"
+
+      REDIS_URL: redis://:${REDIS_PASSWORD}@cache:6379
+      ADZKIA_SECRET: ${ADZKIA_SECRET:?ADZKIA_SECRET wajib diisi}
+      ADZKIA_COOKIE_SECURE: "1"
+      ADZKIA_LANGUAGE_SKILLS: ${ADZKIA_LANGUAGE_SKILLS:-}
+
+    volumes: &app-vol
+      - /srv/adzkia/data/unggahan/audio:/app/data/ielts-audio
+      - /srv/adzkia/data/unggahan/soal:/app/public/soal
+      - /srv/adzkia/data/unggahan/peserta:/app/public/peserta
+      - /srv/adzkia/data/unggahan/warung:/app/public/warung
+
+    ports:
+      - "127.0.0.1:3000:3000"
+
+    healthcheck: &app-health
+      test: ["CMD-SHELL", "wget -qO- http://127.0.0.1:3000/api/sehat || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  app2:
+    <<: *app
+    container_name: adzkia-app-2
+    environment: *app-env
+    volumes: *app-vol
+    healthcheck: *app-health
+    ports:
+      - "127.0.0.1:3001:3000"
+
+  app3:
+    <<: *app
+    container_name: adzkia-app-3
+    environment: *app-env
+    volumes: *app-vol
+    healthcheck: *app-health
+    ports:
+      - "127.0.0.1:3002:3000"
+
+# Tidak ada `volumes:` bernama. SEMUA data yang harus bertahan memakai bind
+# mount ke /srv/adzkia/data, supaya bisa dicadangkan, dilihat, dan dipulihkan
+# dengan perkakas biasa — bukan lewat `docker volume inspect`.

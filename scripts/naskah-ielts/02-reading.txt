@@ -1,0 +1,212 @@
+PASSAGE 1: The Slow Return of the Tram
+PASSAGE:
+For most of the twentieth century the tram was treated as a relic. Between 1930 and 1970, city after city across Europe and North America tore up its rails, sold its rolling stock for scrap and replaced both with buses. The reasoning seemed unanswerable at the time. Buses were cheaper to buy, they needed no overhead wires, and — the argument that mattered most — they could be rerouted overnight, while a tram was fixed for ever to the line beneath it. In an age that believed the private car would soon carry everyone, the inflexibility of the tram looked like an argument against its existence.
+
+Half a century later, that same inflexibility is the reason cities are laying rails again. More than two hundred tram or light-rail systems have opened since 1980, and the majority of them are in places that had abandoned trams within living memory. Nantes reopened its network in 1985, Manchester in 1992, and Dublin, which had closed its last line in 1949, opened a new one in 2004. What changed was not the technology, which is broadly the same, but the way planners understood the relationship between transport and the buildings around it.
+
+The crucial insight is that permanence is an economic asset. A bus route can be moved, and because it can be moved, nobody is willing to invest on the strength of it. A developer deciding whether to build flats above a shop will not commit millions to a site served by something that might be diverted next year. Rails, by contrast, are a promise made in concrete. Studies of new tram corridors have repeatedly found that property values along the route begin rising before the first vehicle runs — that is, in response to the announcement rather than the service. The tram, in other words, does not simply move people to where the city already is; it tells investors where the city intends to be.
+
+There are less abstract advantages too. A modern tram can carry between two hundred and three hundred passengers, roughly four times a standard bus, so a single driver moves four times as many people. Because the vehicle runs on a smooth steel rail, its ride is noticeably steadier than a bus on a worn road surface, and this matters more than engineers once assumed: surveys consistently find that passengers who describe a ride as comfortable are willing to travel further on it. Trams are also easier to board. Their floors sit level with the platform, so a passenger with a suitcase, a pushchair or a wheelchair simply walks on, without the ramp and the apology that a bus requires.
+
+None of this makes the tram a universal answer, and enthusiasts do the mode no favours by pretending otherwise. Construction is disruptive and slow; a typical line takes four years to build, and the shops along the route suffer badly during that period. The cost per kilometre is many times that of a bus lane, and in a city with weak demand a tram is simply an expensive bus with worse manoeuvrability. Edinburgh's first line, delivered years late and at roughly double its original budget, is regularly and fairly cited as a warning.
+
+The honest conclusion is that the tram is not a better vehicle than the bus but a different kind of intervention. A bus route is a service; a tram line is a decision about the shape of a city. Where that decision is clear and a city is prepared to build around it, rails repay their cost several times over. Where it is not, they are an ornament that no amount of engineering can justify.
+QUESTIONS: Questions 1-6. Do the following statements agree with the information given in the passage? Write TRUE if the statement agrees with the information, FALSE if the statement contradicts the information, or NOT GIVEN if there is no information on this.
+
+1. Buses were considered cheaper to purchase than trams in the mid-twentieth century.
+ANSWER: TRUE
+
+2. Dublin closed its original tram network later than Nantes did.
+ANSWER: NOT GIVEN
+
+3. Property prices along a new tram route usually rise only after services begin.
+ANSWER: FALSE
+
+4. A modern tram carries approximately four times as many passengers as a standard bus.
+ANSWER: TRUE
+
+5. Passengers who find a journey comfortable tend to accept longer trips.
+ANSWER: TRUE
+
+6. Edinburgh's first tram line was completed within its original budget.
+ANSWER: FALSE
+
+QUESTIONS: Questions 7-13. Complete the sentences below. Choose NO MORE THAN TWO WORDS AND/OR A NUMBER from the passage for each answer.
+
+7. The main advantage claimed for buses was that they could be ................. overnight.
+ANSWER: rerouted
+
+8. Since 1980, over ................. tram or light-rail systems have been opened.
+ANSWER: 200|two hundred
+
+9. Manchester's network reopened in the year .................
+ANSWER: 1992
+
+10. The writer describes rails as a promise made in .................
+ANSWER: concrete
+
+11. Because tram floors are level with the platform, boarding requires no ................. .
+ANSWER: ramp
+
+12. A typical tram line takes about ................. years to construct.
+ANSWER: four|4
+
+13. In a city with weak demand, the writer says a tram is merely an expensive .................
+ANSWER: bus
+
+
+PASSAGE 2: How Plants Warn One Another
+PASSAGE:
+When a caterpillar begins to eat a leaf, the plant does not simply endure it. Within minutes, the damaged tissue releases a cloud of volatile organic compounds — small, airborne molecules, the same class of chemical that gives cut grass its familiar smell. For a long time these emissions were regarded as a by-product of injury, the botanical equivalent of a wound bleeding. Over the past four decades that interpretation has been steadily dismantled.
+
+The first challenge came in 1983, when two research groups working independently reported that undamaged trees near an attacked tree began producing defensive chemicals of their own. The obvious explanation was that something had travelled through the air between them. The idea was ridiculed. Critics pointed out, reasonably, that the experiments had been conducted in enclosed chambers where any airborne substance would be concentrated far beyond natural levels, and that a signal detectable in a sealed box might disappear entirely in an open field. It took nearly twenty years, and a great many outdoor experiments, before the effect was accepted as real.
+
+What the intervening research established was subtler and more interesting than the original claim. Neighbouring plants do not, in most cases, mount a full defence on receiving the signal. They do something cheaper: they prime. A primed plant produces no additional toxins and pays almost no cost while nothing is happening, but if it is subsequently attacked it responds faster and more strongly than a plant that received no warning. Priming is best understood not as an alarm that triggers action but as one that shortens the delay before action becomes possible.
+
+The mechanism has an awkward implication that biologists were slow to confront. Why would a plant warn its neighbours, which are usually its competitors for light, water and soil? Natural selection does not favour generosity between rivals. The most persuasive answer is that the plant is not warning anyone. The volatiles almost certainly evolved as internal signals, carrying information from a damaged leaf to the undamaged leaves of the same plant, which have no nervous system and no other rapid means of communication. A plant is a large organism with poor internal connectivity; sending a message through the air is, for it, a reasonable solution. Neighbours that eavesdrop on this private message gain an advantage the sender never intended to give.
+
+There is a second audience, and this one the plant does appear to be addressing. Some of the compounds released by a chewed leaf attract predatory wasps that lay their eggs inside caterpillars. Maize seedlings attacked by armyworm produce a blend that draws parasitic wasps from a considerable distance, and the blend differs depending on which insect is doing the damage — caterpillar saliva contains species-specific molecules that the plant detects. The plant, in effect, does not merely shout for help; it specifies the pest. Because the wasp reduces the number of caterpillars, the benefit returns to the plant, and selection can maintain the signal.
+
+Enthusiasm for these findings has outrun the evidence in one respect. Popular accounts frequently describe plants as talking, and occasionally as caring for their offspring or their kin. The chemistry supports neither claim. There is no evidence of intent, no mechanism resembling a decision, and no reason to suppose that a plant distinguishes a message from a smell. What the research does support is more modest and, arguably, more remarkable: that an organism without a brain, without movement and without any capacity to represent the world nevertheless gathers information from its surroundings, adjusts its physiology in response, and manipulates the behaviour of animals that can move. Calling this conversation is a category error. Calling it passive would be equally wrong.
+QUESTIONS: Questions 14-18. Choose the correct letter, A, B, C or D.
+
+14. How were plant volatile emissions understood before the 1980s?
+A. As a means of attracting insects
+B. As an incidental consequence of damage
+C. As a defence against disease
+D. As a way of regulating temperature
+ANSWER: B
+
+15. Why were the 1983 findings initially rejected?
+A. They could not be repeated by other laboratories
+B. The plants used were not native species
+C. The enclosed conditions were considered unrealistic
+D. The measuring instruments were unreliable
+ANSWER: C
+
+16. What is the main characteristic of a primed plant?
+A. It produces toxins continuously
+B. It grows more slowly than its neighbours
+C. It reacts more quickly when attacked later
+D. It releases stronger volatile signals
+ANSWER: C
+
+17. What does the writer suggest is the original function of the volatile signals?
+A. Warning neighbouring plants of danger
+B. Carrying information within a single plant
+C. Discouraging insects from feeding
+D. Marking territory against competitors
+ANSWER: B
+
+18. What is the writer's view of popular accounts of plant communication?
+A. They exaggerate by implying purpose
+B. They rely on outdated experiments
+C. They understate how quickly plants respond
+D. They confuse two different species of wasp
+ANSWER: A
+
+QUESTIONS: Questions 19-23. Complete the summary below. Choose NO MORE THAN TWO WORDS AND/OR A NUMBER from the passage for each answer.
+
+19. Airborne molecules released by damaged leaves are known as volatile organic .................
+ANSWER: compounds
+
+20. The disputed neighbour effect was first reported in the year .................
+ANSWER: 1983
+
+21. A plant that has received a signal but is not yet under attack is described as .................
+ANSWER: primed
+
+22. Plants lack a nervous system and therefore have poor internal .................
+ANSWER: connectivity
+
+23. Maize attacked by armyworm attracts parasitic .................
+ANSWER: wasps
+
+QUESTIONS: Questions 24-26. Do the following statements agree with the views of the writer? Write TRUE, FALSE or NOT GIVEN.
+
+24. A plant can detect which insect species is feeding on it.
+ANSWER: TRUE
+
+25. Plants release warning signals in order to help related plants nearby.
+ANSWER: FALSE
+
+26. Parasitic wasps are now bred commercially for use on maize farms.
+ANSWER: NOT GIVEN
+
+
+PASSAGE 3: In Defence of Boredom
+PASSAGE:
+Boredom has a poor reputation, and until recently it had a poor research literature to match. Psychology treated it as an absence — a gap where interest ought to be — rather than as a state worth studying in its own right. That has changed, and the reason is that boredom turns out to be neither restful nor neutral. People asked to sit alone in an empty room for fifteen minutes with nothing to do report the experience as genuinely unpleasant, and in one widely discussed study a substantial minority chose to give themselves a mild electric shock rather than continue doing nothing, having earlier described the same shock as something they would pay money to avoid.
+
+The finding is often reported as evidence that people cannot bear their own company. A more careful reading suggests something narrower. Boredom is not the absence of stimulation but the frustrated desire for it: the state of wanting to be engaged and finding nothing that engages. This is why it is possible to be bored in a library full of books and impossible to be bored while absorbed in a task, however monotonous the task may look from outside. Boredom is a mismatch between attention and its object, not a shortage of objects.
+
+Understood this way, boredom begins to look functional. Its discomfort is a signal, and the information the signal carries is that the current activity is not worth continuing. An organism that felt nothing when engaged in a useless activity would persist in it. Boredom, on this account, belongs to the same family as hunger and pain: unpleasant by design, because a pleasant version would not work. Researchers who take this view point out that the emotion is not merely aversive but specifically directive. Bored people do not simply stop; they search.
+
+Whether that search is productive is a separate question, and the evidence here is genuinely mixed. Several studies have found that a period of undemanding activity — the classic experiment asks participants to copy numbers from a telephone directory — improves performance on subsequent tests of creative thinking. The proposed explanation is that when attention has nothing external to hold it, the mind turns inward and begins making the loose associations from which unusual ideas emerge. Other laboratories have failed to reproduce the effect, and a fair summary of the field is that boredom appears to help creativity under some conditions and not others, with the conditions still poorly specified.
+
+What is far better established is the escape route. Confronted with boredom, most people now reach for a phone, and a phone is the one object guaranteed to remove the state instantly. This is not, in itself, an argument against phones. It is an argument about frequency. If boredom is a signal that prompts reflection and redirection, then a device that reliably cancels the signal within three seconds removes not only the discomfort but whatever the discomfort was for. The concern is not that people are entertained; it is that they may no longer arrive at the point where boredom does its work.
+
+Educators have drawn a practical conclusion, though not the obvious one. The recommendation emerging from this research is not that children should be bored more — deliberately inflicted boredom mostly produces resentment — but that they should be allowed periods that are unstructured rather than empty. The distinction matters. An empty period offers nothing; an unstructured one offers materials, time and no instruction about what to do with them. Under those conditions boredom appears briefly, as it is supposed to, and then does what it evolved to do: it makes the child go and find something.
+QUESTIONS: Questions 27-32. Do the following statements agree with the information in the passage? Write TRUE, FALSE or NOT GIVEN.
+
+27. Psychologists once regarded boredom as simply a lack of interest.
+ANSWER: TRUE
+
+28. In the study mentioned, every participant chose to receive an electric shock.
+ANSWER: FALSE
+
+29. According to the writer, a person surrounded by books cannot become bored.
+ANSWER: FALSE
+
+30. The writer compares boredom to hunger and pain.
+ANSWER: TRUE
+
+31. All laboratories have confirmed that boredom improves creative performance.
+ANSWER: FALSE
+
+32. Children who use phones during lessons perform worse in examinations.
+ANSWER: NOT GIVEN
+
+QUESTIONS: Questions 33-36. Choose the correct letter, A, B, C or D.
+
+33. How does the writer define boredom?
+A. A complete lack of available stimulation
+B. A wish for engagement that is not satisfied
+C. A temporary loss of the ability to concentrate
+D. A reaction to work that is physically tiring
+ANSWER: B
+
+34. Why does the writer argue that boredom must be unpleasant?
+A. Because pleasant states are harder to measure
+B. Because it develops in early childhood
+C. Because a comfortable version would not prompt change
+D. Because it is closely related to anxiety
+ANSWER: C
+
+35. What does the writer say about the effect of phones?
+A. They are more harmful to children than to adults
+B. They prevent boredom from serving its purpose
+C. They reduce the quality of creative thinking directly
+D. They should be removed from classrooms entirely
+ANSWER: B
+
+36. What do educators recommend, according to the final paragraph?
+A. Deliberately making lessons less interesting
+B. Replacing free time with structured activity
+C. Providing time and materials without instructions
+D. Extending the length of the school day
+ANSWER: C
+
+QUESTIONS: Questions 37-40. Complete the sentences below. Choose NO MORE THAN TWO WORDS from the passage for each answer.
+
+37. Participants in the empty-room study were left alone for fifteen .................
+ANSWER: minutes
+
+38. The writer describes boredom as a mismatch between attention and its .................
+ANSWER: object
+
+39. In the classic creativity experiment, participants copy numbers from a telephone .................
+ANSWER: directory
+
+40. Educators suggest that children need periods that are unstructured rather than .................
+ANSWER: empty

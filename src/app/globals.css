@@ -1,0 +1,767 @@
+@import "tailwindcss";
+
+/* ============================================================
+   ADZKIA SMART — design tokens
+   Brand: teal pekat (ilmu/tenang) + amber (semangat) + slate.
+   Aplikasi selalu tampil terang; ujian butuh kontras yang stabil.
+   ============================================================ */
+:root {
+  --background: #f6f8f9;
+  --surface: #ffffff;
+  --surface-muted: #eef2f4;
+  --foreground: #0f172a;
+  --muted: #64748b;
+  --border: #dbe3e8;
+
+  --brand: #0d6e6a;
+  --brand-strong: #0a534f;
+  --brand-soft: #e3f2f1;
+  --accent: #d97706;
+  --accent-soft: #fef3e2;
+
+  --success: #15803d;
+  --success-soft: #e6f5ec;
+  --danger: #b91c1c;
+  --danger-soft: #fdeaea;
+  --warning: #a16207;
+  --warning-soft: #fdf6e3;
+}
+
+/* ------------------------------------------------------------
+   Tema jalur SKD Kedinasan: maroon utama, oranye aksen.
+   Cukup dipasang sebagai kelas pada elemen pembungkus halaman —
+   seluruh komponen memakai var(--brand)/var(--accent), jadi warnanya
+   ikut berubah tanpa perlu versi komponen tersendiri.
+   ------------------------------------------------------------ */
+.tema-skd {
+  --brand: #7f1d1d;
+  --brand-strong: #601414;
+  --brand-soft: #fdeaea;
+  --accent: #ea7317;
+  --accent-soft: #fef1e3;
+  --background: #faf7f6;
+  --surface-muted: #f4eeed;
+  --border: #e7dcda;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-line: var(--border);
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-soft: var(--brand-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --font-sans: var(--font-plus-jakarta), ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Utilitas kecil yang dipakai lintas halaman */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  padding: 0.625rem 1.125rem;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+  cursor: pointer;
+}
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--brand-strong); }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover:not(:disabled) { filter: brightness(0.94); }
+.btn-ghost { background: var(--surface); color: var(--foreground); border: 1px solid var(--border); }
+.btn-ghost:hover:not(:disabled) { background: var(--surface-muted); }
+/* Tombol untuk perbuatan yang TIDAK BISA DIBATALKAN — sejauh ini hanya
+   "Selesaikan Subtes" di ruang ujian. Merah dipilih pengelola 8 September 2026
+   supaya berbeda tegas dari tombol navigasi di sekitarnya: subtes yang telanjur
+   ditutup tidak bisa dibuka lagi dan waktunya tidak dikembalikan. */
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover:not(:disabled) { filter: brightness(0.92); }
+
+.input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  color: var(--foreground);
+  outline: none;
+}
+.input:focus { border-color: var(--brand); box-shadow: 0 0 0 3px var(--brand-soft); }
+.label { display: block; font-size: 0.875rem; font-weight: 600; margin-bottom: 0.375rem; color: var(--foreground); }
+
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff; }
+}
+
+/* Isi soal: HTML sederhana dari bank soal. Dipakai lewat <TeksSoal/>. */
+.isi-soal { white-space: pre-wrap; line-height: 1.7; }
+.isi-soal > :first-child { margin-top: 0; }
+.isi-soal > :last-child { margin-bottom: 0; }
+.isi-soal p { margin: 0 0 0.75rem; }
+.isi-soal ul, .isi-soal ol { margin: 0 0 0.75rem 1.25rem; list-style: revert; }
+.isi-soal li { margin-bottom: 0.25rem; }
+.isi-soal b, .isi-soal strong { font-weight: 700; }
+.isi-soal i, .isi-soal em { font-style: italic; }
+.isi-soal u { text-decoration: underline; }
+.isi-soal sup { vertical-align: super; font-size: 0.75em; }
+.isi-soal sub { vertical-align: sub; font-size: 0.75em; }
+.isi-soal table { border-collapse: collapse; margin: 0.5rem 0; white-space: normal; }
+.isi-soal th, .isi-soal td { border: 1px solid var(--border); padding: 0.375rem 0.625rem; text-align: left; }
+.isi-soal th { background: var(--surface-muted); font-weight: 600; }
+.isi-soal img { max-width: 100%; height: auto; }
+
+/* ------------------------------------------------------------
+   Tabel di dalam soal.
+
+   Tabel data soal PK dan PM kerap lebih lebar daripada layar ponsel. Tanpa
+   pembungkus bergulir, tabel semacam itu MELEBARKAN seluruh halaman: bilah
+   tombol bawah ikut melar, dan peserta harus menggeser mendatar untuk
+   menemukan kembali pilihan jawabannya. Pembungkusnya dipasang oleh pengurai
+   naskah Word; tabel lama yang belum berpembungkus tetap dibatasi lebarnya.
+   ------------------------------------------------------------ */
+.isi-soal .tabel-soal {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0.75rem 0;
+  max-width: 100%;
+}
+.isi-soal .tabel-soal > table { margin: 0; min-width: max-content; }
+.isi-soal > table { max-width: 100%; }
+
+/* ------------------------------------------------------------
+   Tabel sempit (paling banyak tiga kolom) boleh menyusut dan membungkus.
+
+   `min-width: max-content` di atas menjaga tabel dua kolom — pasangan
+   "Kuantitas P | Kuantitas Q" dan tabel langkah pembuktian PK — supaya
+   rumusnya tidak terpotong di tengah baris. Tapi aturan yang sama membuat
+   tabel perbandingan berkolom banyak melar jauh melewati layar: tabel
+   Traveloka/Tiket.com/Trip.com pada bacaan PM nomor 9-12 selebar 731 px,
+   sedangkan ruang di layar 375 px hanya 309 px — 422 px isinya tersembunyi
+   di balik guliran mendatar yang tidak terlihat peserta, dan di panel bacaan
+   layar besar (436 px) pun masih 295 px tersembunyi.
+
+   Jadi untuk tabel berkolom paling banyak tiga, batas lebarnya dilepas dan
+   isinya boleh berpindah baris — termasuk tabel langkah pembuktian PK nomor 9,
+   yang sebelumnya menyisakan 42 px tersembunyi. Rumus yang berpindah baris
+   masih terbaca utuh; potongan yang tak terlihat sama sekali tidak.
+
+   Batas TIGA kolom itu penting: tabel berkolom banyak yang dipaksa muat akan
+   menyusut jadi lajur-lajur setipis satu kata, dan itu lebih buruk daripada
+   menggulung. Kisi teka-teki PK nomor 1 (5 kolom) dan tabel frekuensi PK
+   nomor 10 (6 kolom) tetap memakai lebar aslinya — keduanya memang sudah muat.
+
+   Di layar sempit jarak sisi selnya ikut dirapatkan, karena padding 3 kolom
+   saja sudah memakan 60 px — cukup untuk membuat kolom terakhir tetap terpotong.
+
+   Peramban tanpa `:has()` (Safari di bawah 15.4) tidak terpengaruh dan tetap
+   mendapat perilaku lama yang menggulung — tersembunyi, tapi tidak hilang.
+   ------------------------------------------------------------ */
+.isi-soal .tabel-soal > table:not(:has(tr > *:nth-child(4))) {
+  min-width: 0;
+  max-width: 100%;
+}
+.isi-soal .tabel-soal > table:not(:has(tr > *:nth-child(4))) :is(th, td) {
+  overflow-wrap: break-word;
+}
+@media (max-width: 639px) {
+  .isi-soal .tabel-soal > table:not(:has(tr > *:nth-child(4))) :is(th, td) {
+    padding-left: 0.375rem;
+    padding-right: 0.375rem;
+  }
+}
+/* Sel tabel selalu satu blok rapat; jarak antar-paragraf tidak berlaku di sini. */
+.isi-soal th > p:only-child,
+.isi-soal td > p:only-child { margin: 0; }
+
+/* ------------------------------------------------------------
+   Jarak antar-paragraf soal.
+   `white-space: pre-wrap` di atas WAJIB untuk soal yang ditulis polos
+   (tabel teks kuantitatif, baris puisi). Tapi begitu isinya HTML ber-<p>,
+   baris baru di antara `</p>` dan `<p>` ikut dipertahankan dan memunculkan
+   SATU BARIS KOSONG TAMBAHAN di atas margin paragraf — bacaan jadi renggang
+   tidak beraturan. Jadi: kalau ada <p>, spasi antar-blok dinormalkan dan
+   pre-wrap dipindahkan ke dalam paragrafnya.
+   ------------------------------------------------------------ */
+.isi-soal:has(p) { white-space: normal; }
+.isi-soal:has(p) p,
+.isi-soal:has(p) li,
+.isi-soal:has(p) td { white-space: pre-wrap; }
+
+/* Bacaan panjang lebih enak dibaca bila rata kiri-kanan dan dipenggal rapi. */
+.isi-soal p { hyphens: auto; overflow-wrap: break-word; }
+
+/* ------------------------------------------------------------
+   Ruang ujian di peramban tanpa Fullscreen API (semua peramban di iPhone).
+   Halaman dikunci persis setinggi viewport yang terlihat (100dvh) dan hanya
+   isinya yang menggulung, sehingga tidak ada bagian yang terpotong di bawah
+   bilah alamat Safari dan bilah tombol bawah selalu terjangkau.
+   ------------------------------------------------------------ */
+.ruang-semu {
+  position: fixed;
+  inset: 0;
+  height: 100dvh;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+.ruang-semu .isi-gulung { flex: 1 1 auto; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+
+/* Sisakan ruang untuk garis beranda iPhone dan poni layar. */
+.aman-bawah { padding-bottom: max(0.5rem, env(safe-area-inset-bottom)); }
+.aman-atas { padding-top: env(safe-area-inset-top); }
+
+/* ------------------------------------------------------------
+   Menutup menu tekan-tahan iOS di ruang ujian.
+
+   Di laptop, menu salin diblokir lewat peristiwa `contextmenu`. Peristiwa itu
+   TIDAK terpancar di iPhone: menekan-tahan soal atau gambar soal memunculkan
+   menu sistem (Salin · Bagikan · Look Up · Tambahkan ke Foto) yang digambar
+   WebKit sendiri, dan satu-satunya yang mematikannya adalah properti di bawah.
+   Tanpa ini, peserta iPhone bisa menyalin dan membagikan soal tanpa pernah
+   meninggalkan halaman — sehingga tak satu pun penjagaan lain menangkapnya.
+
+   `-webkit-user-drag` menutup jalan kedua: menyeret gambar soal keluar.
+   Kolom jawaban dikecualikan supaya isian singkat tetap bisa disunting, persis
+   seperti pengecualian yang sudah berlaku pada penghalang salin di JavaScript.
+   ------------------------------------------------------------ */
+.ruang-ujian {
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.ruang-ujian img {
+  -webkit-user-drag: none;
+  user-select: none;
+}
+.ruang-ujian input,
+.ruang-ujian textarea {
+  -webkit-touch-callout: default;
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* ------------------------------------------------------------
+   WARUNG SOAL — tema gelap bergaya permainan.
+
+   Satu-satunya bagian aplikasi yang berlatar gelap, dan itu disengaja:
+   Warung Soal adalah ruang berlatih santai, bukan ruang ujian, jadi
+   tampilannya boleh berbeda tegas supaya siswa tahu ia sedang bermain,
+   bukan sedang dinilai. Semua token warna ditimpa di sini sehingga
+   komponen yang sama (.card, .btn, .input) langsung ikut gelap tanpa
+   perlu versi tersendiri.
+   ------------------------------------------------------------ */
+.tema-warung {
+  --background: #0a0f1f;
+  --surface: #141b32;
+  --surface-muted: #1d2647;
+  --foreground: #eef2ff;
+  --muted: #94a3c7;
+  --border: #2b355a;
+
+  --brand: #7c3aed;
+  --brand-strong: #6d28d9;
+  --brand-soft: rgba(124, 58, 237, 0.2);
+  --accent: #22d3ee;
+  --accent-soft: rgba(34, 211, 238, 0.16);
+
+  --success: #34d399;
+  --success-soft: rgba(52, 211, 153, 0.16);
+  --danger: #fb7185;
+  --danger-soft: rgba(251, 113, 133, 0.16);
+  --warning: #fbbf24;
+  --warning-soft: rgba(251, 191, 36, 0.16);
+
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Latar berkisi tipis + dua cahaya sudut: memberi kedalaman tanpa gambar,
+   jadi halaman tetap ringan dibuka lewat data seluler siswa. */
+.kisi-warung {
+  background-image:
+    radial-gradient(760px 380px at 12% -10%, rgba(124, 58, 237, 0.28), transparent 70%),
+    radial-gradient(680px 340px at 88% 0%, rgba(34, 211, 238, 0.2), transparent 70%),
+    linear-gradient(rgba(148, 163, 199, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 199, 0.07) 1px, transparent 1px);
+  background-size: auto, auto, 44px 44px, 44px 44px;
+}
+
+/* Tulisan bergradasi untuk judul besar. */
+.teks-neon {
+  background: linear-gradient(92deg, #a78bfa 0%, #22d3ee 55%, #34d399 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Kartu yang menyala saat disentuh — dipakai kartu level dan papan peringkat. */
+.kartu-neon {
+  position: relative;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.01));
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.kartu-neon:hover {
+  transform: translateY(-3px);
+  border-color: var(--warna-level, var(--accent));
+  box-shadow: 0 12px 40px -12px var(--warna-level, var(--accent));
+}
+
+/* Tombol pilihan jawaban di arena. */
+.opsi-main {
+  display: flex;
+  width: 100%;
+  align-items: flex-start;
+  gap: 0.75rem;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 0.875rem 1rem;
+  text-align: left;
+  transition: border-color 0.15s, background-color 0.15s, transform 0.1s;
+  cursor: pointer;
+}
+.opsi-main:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: rgba(34, 211, 238, 0.08);
+}
+.opsi-main:active:not(:disabled) { transform: scale(0.99); }
+.opsi-main:disabled { cursor: default; }
+/* Pilihan yang sedang dipilih siswa selagi mengerjakan. */
+.opsi-main.terpilih {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.opsi-main.benar {
+  border-color: var(--success);
+  background: var(--success-soft);
+}
+.opsi-main.salah {
+  border-color: var(--danger);
+  background: var(--danger-soft);
+}
+
+/* Huruf A-E di depan pilihan. */
+.huruf-opsi {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: 0.625rem;
+  border: 1px solid var(--border);
+  font-weight: 800;
+  font-size: 0.8125rem;
+}
+
+@keyframes warung-masuk {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+.masuk-warung { animation: warung-masuk 0.28s ease-out both; }
+
+@keyframes warung-pop {
+  0%   { transform: scale(1); }
+  45%  { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+.pop-warung { animation: warung-pop 0.42s ease-out; }
+
+@keyframes warung-getar {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-6px); }
+  40%      { transform: translateX(6px); }
+  60%      { transform: translateX(-4px); }
+  80%      { transform: translateX(4px); }
+}
+.getar-warung { animation: warung-getar 0.36s ease-in-out; }
+
+/* Bilah waktu tiap soal. Warnanya berubah sendiri saat waktu menipis. */
+.bilah-waktu {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: var(--surface-muted);
+  overflow: hidden;
+}
+.bilah-waktu > span {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #22d3ee, #a78bfa);
+  transition: width 0.95s linear, background 0.3s;
+}
+.bilah-waktu.menipis > span { background: linear-gradient(90deg, #fbbf24, #fb7185); }
+
+/* Yang lebih suka gerakan minim tidak perlu ikut animasinya. */
+@media (prefers-reduced-motion: reduce) {
+  .masuk-warung, .pop-warung, .getar-warung { animation: none; }
+  .kartu-neon { transition: none; }
+  .kartu-neon:hover { transform: none; }
+}
+
+/* ============================================================
+   Tema LANGUAGE SKILL (IELTS & TOEFL) — sedang dibangun, hanya
+   tampil di komputer pengembang. Lihat src/lib/language-konstanta.ts.
+
+   Rupanya sengaja berbeda dari seluruh aplikasi: kertas krem, tulisan
+   raksasa, dan satu warna merah tunggal — meniru tata letak rujukan yang
+   diberikan pengelola. Sama seperti `tema-warung`, cukup dipasang sebagai
+   kelas pembungkus; .card, .btn, .input yang sama langsung ikut berubah.
+   ============================================================ */
+.tema-language {
+  --background: #fbf7f1;
+  --surface: #ffffff;
+  --surface-muted: #f4ede3;
+  --foreground: #17110e;
+  --muted: #7c7268;
+  --border: #e8dfd3;
+
+  --brand: #e4123f;
+  --brand-strong: #bd0d33;
+  --brand-soft: #fde8ed;
+  --accent: #17110e;
+  --accent-soft: #f1eae0;
+
+  --success: #157347;
+  --success-soft: #e4f3ea;
+  --danger: #bd0d33;
+  --danger-soft: #fde8ed;
+  --warning: #a4600a;
+  --warning-soft: #fbf0df;
+
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Dua cahaya merah samar di sudut atas supaya kertasnya tidak rata mati. */
+.kertas-language {
+  background-image:
+    radial-gradient(680px 320px at 8% -12%, rgba(228, 18, 63, 0.07), transparent 70%),
+    radial-gradient(620px 300px at 92% -8%, rgba(228, 18, 63, 0.05), transparent 70%);
+}
+
+/* Serba bulat: kolom isian dan tombol di tema ini berbentuk kapsul. */
+.tema-language .btn { border-radius: 999px; }
+.tema-language .input { border-radius: 999px; padding: 0.75rem 1.125rem; }
+.tema-language .input:focus { box-shadow: 0 0 0 4px var(--brand-soft); }
+.tema-language .card { border-radius: 1.5rem; }
+
+/* Bilah navigasi hitam melayang. */
+.pil-language {
+  background: #17110e;
+  border-radius: 999px;
+  color: #fff;
+  box-shadow: 0 18px 40px -24px rgba(23, 17, 14, 0.9);
+}
+
+/* Kotak merah yang memeluk satu kata di tengah judul (mis. "#AI"). */
+.sorot-language {
+  display: inline-block;
+  background: var(--brand);
+  color: #fff;
+  border-radius: 0.9rem;
+  padding: 0 0.5rem;
+  box-shadow: 0 10px 30px -14px rgba(228, 18, 63, 0.9);
+}
+
+/* Kartu-kartu kecil yang mengintip di tepi layar — hiasan, bukan tombol.
+   Disembunyikan di layar sempit supaya tidak menindih isi halaman. */
+.intip-language {
+  position: absolute;
+  display: none;
+  width: 12.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 0.75rem 0.875rem;
+  box-shadow: 0 24px 48px -28px rgba(23, 17, 14, 0.45);
+  pointer-events: none;
+  user-select: none;
+}
+@media (min-width: 1180px) {
+  .intip-language { display: block; }
+}
+
+/* Kartu pilihan ujian (IELTS / TOEFL). */
+.kartu-language {
+  position: relative;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.75rem;
+  transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
+}
+.kartu-language:hover {
+  transform: translateY(-4px);
+  border-color: var(--brand);
+  box-shadow: 0 30px 60px -34px rgba(23, 17, 14, 0.55);
+}
+
+@keyframes language-masuk {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: none; }
+}
+.masuk-language { animation: language-masuk 0.32s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .masuk-language { animation: none; }
+  .kartu-language, .kartu-language:hover { transition: none; transform: none; }
+}
+
+/* ============================================================
+   Tema PANEL PENGELOLA — kertas krem.
+
+   Diminta pengelola 11 September 2026: "layout tampilan halaman admin,
+   buatkan lebih fresh dan smooth, bisa dibuat perpaduan warna cream gitu."
+
+   Dipasang sebagai kelas pembungkus di `app/admin/layout.tsx`, pola yang
+   sama dengan `tema-skd`, `tema-warung`, dan `tema-language`. Seluruh
+   komponen sudah membaca var(--surface)/var(--border)/dst, jadi tidak ada
+   satu pun komponen yang perlu versi tersendiri.
+
+   YANG SENGAJA TIDAK DIUBAH: --brand tetap teal ADZKIA SMART. Krem di sini
+   mengganti KERTASNYA, bukan identitasnya — panel yang warnanya berubah
+   sama sekali akan terbaca seperti aplikasi lain.
+
+   Nada success/danger/warning ikut dihangatkan sedikit supaya lencana
+   "Terbit"/"Ditutup" tidak melompat dingin di atas kertas hangat.
+   ============================================================ */
+.tema-admin {
+  --background: #faf6ee;
+  --surface: #fffdf8;
+  --surface-muted: #f3ebdd;
+  --foreground: #2b2418;
+  --muted: #7b6f5c;
+  --border: #e9dfcc;
+
+  --brand-soft: #e2f1ef;
+  --accent: #b4730d;
+  --accent-soft: #fbf0db;
+
+  --success-soft: #e9f4ea;
+  --danger-soft: #fbeae6;
+  --warning-soft: #fbf1dc;
+}
+
+/* Dua cahaya hangat samar di kepala halaman supaya kertasnya tidak rata mati —
+   sama seperti `.kertas-language`, dan sama-sama sekadar latar. */
+.tema-admin {
+  background-image:
+    radial-gradient(900px 380px at 12% -14%, rgba(180, 115, 13, 0.06), transparent 70%),
+    radial-gradient(760px 340px at 88% -10%, rgba(13, 110, 106, 0.05), transparent 70%);
+  background-repeat: no-repeat;
+}
+
+/* Kartu di atas kertas krem butuh bayangan yang sangat lembut, bukan garis
+   tegas: garis saja membuat panel penuh kartu terlihat seperti kisi-kisi. */
+.tema-admin .card {
+  border-radius: 1.125rem;
+  box-shadow: 0 1px 2px rgba(43, 36, 24, 0.04), 0 12px 28px -22px rgba(43, 36, 24, 0.28);
+}
+
+/* Tombol dan kolom isian ikut dibulatkan sedikit supaya senada dengan kartunya. */
+.tema-admin .btn { border-radius: 0.875rem; }
+.tema-admin .input { border-radius: 0.875rem; }
+.tema-admin .input:focus { box-shadow: 0 0 0 4px rgba(13, 110, 106, 0.1); }
+
+/* Perpindahan warna yang halus di seluruh panel — hover baris daftar, tab
+   navigasi, tombol. Tanpa ini krem yang berganti terasa mengedip. */
+.tema-admin a,
+.tema-admin button,
+.tema-admin .card,
+.tema-admin li {
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+/* Pemakai yang meminta gerakan seminimal mungkin tidak dipaksa melihatnya. */
+@media (prefers-reduced-motion: reduce) {
+  .tema-admin a,
+  .tema-admin button,
+  .tema-admin .card,
+  .tema-admin li {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Beranda siswa — sampul dan kartu.
+
+   Diminta pengelola 11 September 2026: "tampilan dashboardnya lebih
+   elegan, soft, enak dipandang, modern."
+
+   Seluruhnya memakai var(--brand)/var(--accent), jadi beranda jalur SKD
+   ikut berubah menjadi maroon-oranye lewat `tema-skd` tanpa satu pun
+   aturan tambahan di bawah ini.
+   ============================================================ */
+
+/* Sampul sapaan: gradasi warna jalur, bukan gambar — tidak ada berkas yang
+   harus diunduh, dan warnanya ikut berubah sendiri di jalur SKD. */
+.sampul-beranda {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.75rem;
+  color: #fff;
+  background:
+    radial-gradient(620px 300px at 88% -35%, rgba(255, 255, 255, 0.22), transparent 70%),
+    radial-gradient(420px 260px at 8% 130%, rgba(255, 255, 255, 0.12), transparent 70%),
+    linear-gradient(135deg, var(--brand-strong) 0%, var(--brand) 62%, var(--accent) 190%);
+  box-shadow: 0 24px 48px -28px rgba(15, 23, 42, 0.55);
+}
+
+/* Dua cincin tipis di sudut kanan. Murni hiasan — aria-hidden di markah —
+   dan sengaja SANGAT samar supaya tidak melawan teks sapaannya. */
+.sampul-beranda::after {
+  content: "";
+  position: absolute;
+  right: -5rem;
+  top: -7rem;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 2.5rem rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+}
+
+/* Kartu angka capaian dan kartu paket: terangkat sedikit saat disentuh
+   tetikus. Gerakannya kecil dengan sengaja — beranda siswa dibuka tiap hari,
+   dan animasi yang mencolok cepat terasa berisik. */
+.kartu-angkat {
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    border-color 0.18s ease;
+}
+.kartu-angkat:hover {
+  transform: translateY(-3px);
+  border-color: var(--brand);
+  box-shadow: 0 18px 36px -24px rgba(15, 23, 42, 0.45);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kartu-angkat,
+  .kartu-angkat:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ============================================================
+   Halaman depan — kertas krem, gambar membulat, tombol kapsul.
+
+   Ditata ulang 11 September 2026 mengikuti rujukan rupa yang diberikan
+   pengelola: latar krem hangat, foto besar bersudut membulat, bilah
+   ringkasan mengambang yang menindih sampul, dan tombol kapsul hijau.
+
+   Dipasang sebagai kelas pembungkus seperti `tema-skd` dan `tema-admin`,
+   jadi halaman lain tidak ikut berubah.
+   ============================================================ */
+.kertas-landing {
+  --background: #f1ebe0;
+  --surface: #fffdf9;
+  --surface-muted: #f7f1e7;
+  --foreground: #1e2a26;
+  --muted: #6d7a74;
+  --border: #e7ded0;
+
+  --accent: #b4730d;
+  --accent-soft: #fbf0db;
+
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Tombol di halaman ini berbentuk KAPSUL, mengikuti rujukannya. Dibatasi
+   pada pembungkus ini saja — ruang ujian dan panel tetap bersudut biasa. */
+.kertas-landing .btn {
+  border-radius: 999px;
+  padding: 0.7rem 1.5rem;
+}
+
+/* Bidang putih yang memisahkan jalur konten dari kertas krem. */
+.pita-terang {
+  background: var(--surface);
+}
+
+/* Sampul: foto besar bersudut membulat, bukan bidang selebar layar. */
+.sampul-landing {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 2rem;
+  box-shadow: 0 40px 80px -48px rgba(30, 42, 38, 0.7);
+}
+
+/* Bilah ringkasan yang menindih tepi bawah sampul — bentuk khas rujukannya. */
+.bilah-mengambang {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  box-shadow: 0 28px 56px -34px rgba(30, 42, 38, 0.55);
+}
+
+/* Foto isi halaman: sudut membulat besar dan naik tipis saat disentuh. */
+.foto-landing {
+  overflow: hidden;
+  border-radius: 1.5rem;
+  transition: transform 0.24s ease, box-shadow 0.24s ease;
+}
+.foto-landing:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 26px 50px -30px rgba(30, 42, 38, 0.5);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .foto-landing,
+  .foto-landing:hover {
+    transition: none;
+    transform: none;
+  }
+}
+
+/* ------------------------------------------------------------
+   Halaman jalur SKD DI ATAS kertas krem.
+
+   `.kertas-landing` dan `.tema-skd` sama-sama berbobot satu kelas, dan
+   `.kertas-landing` ditulis belakangan — jadi tanpa blok ini kertasnya menang
+   untuk SEMUA peubah yang mereka perebutkan, termasuk `--brand`, dan halaman
+   SKD akan berubah teal. Blok gabungan ini (bobot dua kelas) mengembalikan
+   yang memang milik SKD — maroon dan oranye — sambil MEMBIARKAN kertas,
+   permukaan, dan garisnya tetap krem.
+   ------------------------------------------------------------ */
+.kertas-landing.tema-skd {
+  --brand: #7f1d1d;
+  --brand-strong: #601414;
+  /* Dihangatkan dari #fdeaea: merah muda dingin duduk buruk di atas krem. */
+  --brand-soft: #f7e7e3;
+  --accent: #b4560d;
+  --accent-soft: #fbe9da;
+}
