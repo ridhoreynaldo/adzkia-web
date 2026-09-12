@@ -89,7 +89,11 @@ types.setTypeParser(1184, waktuKeTeks); // timestamptz
    ========================================================================== */
 
 const ALAMAT = process.env.DATABASE_URL;
-if (!ALAMAT) {
+
+// Jangan hentikan eksekusi jika proses yang berjalan adalah 'next build'
+const sedangBuild = process.env.npm_lifecycle_event === 'build' || process.env.NEXT_PHASE === 'phase-production-build';
+
+if (!ALAMAT && !sedangBuild) {
   throw new Error(
     "DATABASE_URL belum diisi. Salin .env.example menjadi .env, lalu isi alamat PostgreSQL-nya.",
   );
