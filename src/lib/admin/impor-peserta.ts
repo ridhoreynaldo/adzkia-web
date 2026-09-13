@@ -189,58 +189,68 @@ async function namaLoginUnik(nama: string, userIdSendiri: number | null): Promis
 export async function simpanImporPeserta(baris: BarisPeserta[]): Promise<HasilSimpanPeserta> {
   const hasil: HasilSimpanPeserta = { ditambah: 0, diperbarui: 0, gagal: 0 };
 
-  for (const b of baris) {
-    if (b.galat.length > 0) continue;
-    try {
-      const hash = await hashPassword(b.password);
-      const ada = await one<{ id: number; role: string }>(
-        "SELECT id, role FROM users WHERE nisn = ?",
-        b.nisn,
-      );
+  // PROSES BATCHING: Eksekusi 50 baris sekaligus secara bersamaan
+  const BATCH_SIZE = 50;
 
-      if (ada) {
-        // Akun pengelola tidak boleh tersapu impor daftar siswa.
-        if (ada.role === "admin") {
+  for (let i = 0; i < baris.length; i += BATCH_SIZE) {
+    const batch = baris.slice(i, i + BATCH_SIZE);
+
+    // Jalankan operasi DB dan Hashing secara paralel untuk 50 baris ini
+    await Promise.all(
+      batch.map(async (b) => {
+        if (b.galat.length > 0) return;
+
+        try {
+          const hash = await hashPassword(b.password);
+          const ada = await one<{ id: number; role: string }>(
+            "SELECT id, role FROM users WHERE nisn = ?",
+            b.nisn,
+          );
+
+          if (ada) {
+            if (ada.role === "admin") {
+              hasil.gagal++;
+              return; // return di dalam map berfungsi seperti continue di loop biasa
+            }
+            await run(
+              `UPDATE users
+                  SET nama = ?, nama_login = ?, kelas = ?, password_hash = ?,
+                      tanggal_lahir = COALESCE(NULLIF(?, ''), tanggal_lahir),
+                      asal_sekolah  = COALESCE(NULLIF(?, ''), asal_sekolah),
+                      no_hp         = COALESCE(NULLIF(?, ''), no_hp)
+                WHERE id = ?`,
+              b.nama,
+              await namaLoginUnik(b.nama, ada.id),
+              b.kelas || null,
+              hash,
+              b.tanggal_lahir,
+              b.asal_sekolah,
+              b.no_hp,
+              ada.id,
+            );
+            hasil.diperbarui++;
+            return;
+          }
+
+          await run(
+            `INSERT INTO users (nama, nisn, kelas, tanggal_lahir, nama_login, email, password_hash, role, asal_sekolah, no_hp)
+             VALUES (?, ?, ?, ?, ?, ?, ?, 'siswa', ?, ?)`,
+            b.nama,
+            b.nisn,
+            b.kelas || null,
+            b.tanggal_lahir || null,
+            await namaLoginUnik(b.nama, null),
+            emailDariNisn(b.nisn),
+            hash,
+            b.asal_sekolah || null,
+            b.no_hp || null,
+          );
+          hasil.ditambah++;
+        } catch (error) {
           hasil.gagal++;
-          continue;
         }
-        await run(
-          `UPDATE users
-              SET nama = ?, nama_login = ?, kelas = ?, password_hash = ?,
-                  tanggal_lahir = COALESCE(NULLIF(?, ''), tanggal_lahir),
-                  asal_sekolah  = COALESCE(NULLIF(?, ''), asal_sekolah),
-                  no_hp         = COALESCE(NULLIF(?, ''), no_hp)
-            WHERE id = ?`,
-          b.nama,
-          await namaLoginUnik(b.nama, ada.id),
-          b.kelas || null,
-          hash,
-          b.tanggal_lahir,
-          b.asal_sekolah,
-          b.no_hp,
-          ada.id,
-        );
-        hasil.diperbarui++;
-        continue;
-      }
-
-      await run(
-        `INSERT INTO users (nama, nisn, kelas, tanggal_lahir, nama_login, email, password_hash, role, asal_sekolah, no_hp)
-         VALUES (?, ?, ?, ?, ?, ?, ?, 'siswa', ?, ?)`,
-        b.nama,
-        b.nisn,
-        b.kelas || null,
-        b.tanggal_lahir || null,
-        await namaLoginUnik(b.nama, null),
-        emailDariNisn(b.nisn),
-        hash,
-        b.asal_sekolah || null,
-        b.no_hp || null,
-      );
-      hasil.ditambah++;
-    } catch {
-      hasil.gagal++;
-    }
+      })
+    );
   }
 
   return hasil;

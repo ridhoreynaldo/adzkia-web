@@ -10,6 +10,9 @@ ARG NODE_VERSI=22.11-alpine
 FROM node:${NODE_VERSI} AS deps
 WORKDIR /app
 
+# Diperlukan untuk mengompilasi bcrypt (native addon)
+RUN apk add --no-cache python3 make g++
+
 COPY package.json package-lock.json ./
 RUN npm ci
 

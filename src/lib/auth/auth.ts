@@ -2,7 +2,7 @@ import "server-only";
 import { cookies, headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { SignJWT, jwtVerify } from "jose";
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import { one, sisipWajib } from "@/lib/core/db";
 import { RUTE_LOGIN_ADMIN, RUTE_PANEL_IELTS } from "@/lib/admin/admin-konstanta";
 import { lepasSesiAdmin, sentuhSesiAdmin } from "@/lib/auth/sesi-admin";

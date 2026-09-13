@@ -62,7 +62,7 @@
     "migrasi": "node scripts/migrasi.mjs"
   },
   "dependencies": {
-    "bcryptjs": "^3.0.3",
+    "bcrypt": "^6.0.0",
     "drizzle-orm": "^0.45.2",
     "exceljs": "^4.4.0",
     "ioredis": "^6.0.0",
@@ -76,7 +76,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/bcryptjs": "^2.4.6",
+    "@types/bcrypt": "^6.0.0",
     "@types/node": "^24.13.3",
     "@types/pg": "^8.23.1",
     "@types/react": "^19",
