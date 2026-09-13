@@ -642,8 +642,8 @@ export async function bukaBlokirIelts(pengerjaanId: number): Promise<HasilBukaBl
   const terbuka = await one<{ n: number }>(
     `SELECT COUNT(*) AS n FROM ielts_paket
       WHERE id = ? AND status = 'published'
-        AND (mulai_at   IS NULL OR TRIM(mulai_at)   = '' OR datetime(mulai_at)   <= datetime('now','localtime'))
-        AND (selesai_at IS NULL OR TRIM(selesai_at) = '' OR datetime(selesai_at) >= datetime('now','localtime'))`,
+        AND (mulai_at   IS NULL OR TRIM(CAST(mulai_at AS TEXT))   = '' OR datetime(mulai_at)   <= datetime('now','localtime'))
+        AND (selesai_at IS NULL OR TRIM(CAST(selesai_at AS TEXT)) = '' OR datetime(selesai_at) >= datetime('now','localtime'))`,
     p.paket_id,
   );
 
@@ -718,7 +718,7 @@ export async function rekapPelanggaranIelts(paketId: number): Promise<RekapIelts
        LEFT JOIN ielts_pelanggaran v
               ON v.pengerjaan_id = p.id AND v.ronde = p.ronde
       WHERE p.paket_id = ?
-      GROUP BY p.id
+      GROUP BY p.id, p.user_id, u.nama, u.nisn, u.kelas, p.status, p.ronde, p.alasan_gugur, p.digugurkan_at
      HAVING COUNT(v.id) > 0 OR p.status = 'gugur'
       ORDER BY (p.status = 'gugur') DESC, COUNT(v.id) DESC, u.nama`,
     paketId,

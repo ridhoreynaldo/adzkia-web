@@ -142,7 +142,7 @@ export async function papanLiveIelts(paketId: number): Promise<BarisLiveIelts[]>
                      WHERE s.pengerjaan_id = p.id AND s.selesai_at IS NULL
                        AND julianday(s.deadline_at) > julianday('now'))        AS timer_jalan,
             (SELECT CASE WHEN k.status = 'closed'
-                           OR (k.selesai_at IS NOT NULL AND TRIM(k.selesai_at) <> ''
+                           OR (k.selesai_at IS NOT NULL AND TRIM(CAST(k.selesai_at AS TEXT)) <> ''
                                AND datetime(k.selesai_at) < datetime('now','localtime'))
                          THEN 1 ELSE 0 END
                FROM ielts_paket k WHERE k.id = p.paket_id)                     AS jendela_tutup
