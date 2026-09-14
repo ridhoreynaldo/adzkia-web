@@ -31,12 +31,15 @@ import {
   statusPortalIelts,
 } from "@/lib/ielts/ielts";
 
+import { ringkasPaketBawaan } from "@/lib/ielts/paket-bawaan";
+
 import {
   buatPaketIeltsAction,
   hapusPaketIeltsAction,
   hapusRiwayatIeltsAction,
   hitungUlangIeltsAction,
   kunciPortalIeltsAction,
+  pasangPaketBawaanAction,
   setPembahasanIeltsAction,
   setStatusPaketIeltsAction,
 } from "./actions";
@@ -83,6 +86,10 @@ export default async function AdminIeltsPage({
   // riwayat" perlu digambar sama sekali, DAN untuk menyebutkan angkanya di
   // dialog konfirmasi. Pengelola berhak tahu persis apa yang akan hilang.
   const riwayat = await jejakRiwayatPerPaket(idPaket);
+
+  // Paket yang ikut terbangun ke dalam aplikasi, berikut keadaannya di basis
+  // data server ini — dipakai bagian "Paket bawaan" di bawah.
+  const bawaan = await ringkasPaketBawaan();
 
   const terbit = paket.filter((p) => p.status === "published").length;
   const paketPertama = paket[0]?.id ?? 0;
@@ -471,6 +478,85 @@ export default async function AdminIeltsPage({
           </ul>
         </div>
       )}
+
+      {/* ================= PAKET BAWAAN ================= */}
+      {/*
+        Paket yang isinya sudah ikut terbangun ke dalam aplikasi.
+
+        Ada karena naskah Word dan skrip penyemainya TIDAK ikut ke server:
+        citra Docker hanya membawa hasil build. Tanpa bagian ini, server yang
+        dipasang lewat `git push` hanya bisa diisi oleh orang yang punya shell
+        di dalamnya. Rincian pertimbangannya di `src/lib/ielts/paket-bawaan.ts`.
+      */}
+      <section className="card mt-8 p-6">
+        <h2 className="flex items-center gap-2 text-lg font-extrabold tracking-tight">
+          <IkonPaket className="h-5 w-5 text-brand" />
+          Paket bawaan aplikasi
+        </h2>
+        <p className="mt-1 text-sm text-muted">
+          Soal dan bacaannya sudah ikut terbangun di dalam aplikasi ini; rekamannya ditarik dari
+          server lama saat tombol ditekan, jadi prosesnya perlu waktu — puluhan megabyte lewat
+          jaringan. Paket yang sudah pernah dikerjakan peserta tidak akan disentuh.
+        </p>
+
+        <ul className="mt-5 grid gap-3">
+          {bawaan.map((b) => {
+            const t = b.terpasang;
+            const lengkap = t !== null && t.butir >= b.butir.reduce((n, x) => n + x.jumlah, 0);
+            return (
+              <li key={b.kode} className="rounded-xl border border-line bg-surface-muted/60 p-4">
+                <div className="flex flex-wrap items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="font-extrabold tracking-tight">{b.kode}</p>
+                    <p className="truncate text-sm text-muted">{b.nama}</p>
+                    <p className="mt-1 text-xs text-muted">
+                      {b.butir.map((x) => `${x.subtes} ${x.jumlah}`).join(" · ")} · {b.rekaman}{" "}
+                      rekaman
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {t === null ? (
+                      <Badge tone="warning">belum ada</Badge>
+                    ) : lengkap ? (
+                      <Badge tone="success">terpasang · {t.butir} butir</Badge>
+                    ) : (
+                      <Badge tone="warning">baru {t.butir} butir</Badge>
+                    )}
+                  </div>
+                </div>
+
+                <div className="mt-3 flex flex-wrap items-center gap-3">
+                  <form action={pasangPaketBawaanAction}>
+                    <input type="hidden" name="kode" value={b.kode} />
+                    <TombolKonfirmasi
+                      pesan={
+                        t === null
+                          ? `Pasang ${b.kode} ke server ini? Rekamannya ikut ditarik dari server lama, jadi perlu waktu.`
+                          : t.pengerjaan > 0
+                            ? `Lengkapi ${b.kode}? Butir yang sudah ada dibiarkan apa adanya — yang ditambahkan hanya bagian, rekaman, dan nomor yang belum terisi.`
+                            : `Susun ulang ${b.kode} dari bawaan aplikasi? Isi paket yang sekarang diganti seluruhnya.`
+                      }
+                      className="btn btn-primary !px-3 !py-1.5 text-xs"
+                    >
+                      {t === null
+                        ? "Pasang paket ini"
+                        : t.pengerjaan > 0
+                          ? "Lengkapi dari bawaan"
+                          : "Susun ulang dari bawaan"}
+                    </TombolKonfirmasi>
+                  </form>
+                  {t !== null && t.pengerjaan > 0 && (
+                    <p className="text-xs text-muted">
+                      Sudah dikerjakan {t.pengerjaan} peserta — jawaban mereka tidak akan disentuh,
+                      dan butir yang sudah ada tidak diganti.
+                    </p>
+                  )}
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      </section>
 
       {/* ================= PAKET BARU ================= */}
       <section className="card mt-8 p-6">

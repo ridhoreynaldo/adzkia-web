@@ -35,9 +35,9 @@ const AKAR = process.cwd();
 const muat = (berkas) =>
   import(pathToFileURL(path.join(AKAR, "src", "lib", berkas)).href);
 
-const { run, all } = await muat("db.ts");
-const I = await muat("ielts.ts");
-const N = await muat("ielts-naskah.ts");
+const { run, all } = await muat("core/db.ts");
+const I = await muat("ielts/ielts.ts");
+const N = await muat("ielts/ielts-naskah.ts");
 
 /* ---------------- Pilihan baris perintah ---------------- */
 
@@ -61,21 +61,21 @@ const DIR = path.join(AKAR, "scripts", "naskah-ielts");
 
 /* ---------------- Paket ---------------- */
 
-let paket = all("SELECT * FROM ielts_paket WHERE kode = ?", KODE)[0];
+let paket = (await all("SELECT * FROM ielts_paket WHERE kode = ?", KODE))[0];
 if (!paket) {
-  const id = I.buatPaket({
+  const id = await I.buatPaket({
     kode: KODE,
     nama: NAMA,
     deskripsi: "Paket contoh berstandar IELTS internasional — 40 / 40 / 2 / 3 butir.",
   });
-  paket = I.paketById(id);
+  paket = await I.paketById(id);
   console.log(`Paket dibuat: ${paket.kode} — ${paket.nama} (id ${paket.id})`);
 } else {
   console.log(`Paket sudah ada: ${paket.kode} (id ${paket.id})`);
 }
 
 if (ULANG) {
-  run("DELETE FROM ielts_soal WHERE paket_id = ?", paket.id);
+  await run("DELETE FROM ielts_soal WHERE paket_id = ?", paket.id);
   console.log("  Seluruh butir lama dihapus (--ulang).");
 }
 
@@ -97,8 +97,8 @@ for (const { berkas, subtes } of NASKAH) {
     // terkecil. Itu yang membuat skrip ini aman diulang dan aman dijalankan
     // pada paket yang separuh isinya sudah diketik pengelola.
     mode: "lanjut",
-    nomorTerpakai: I.nomorTerpakai(paket.id, subtes),
-    sidikAda: new Set(I.pertanyaanSubtes(paket.id, subtes).map(N.sidikPertanyaan)),
+    nomorTerpakai: await I.nomorTerpakai(paket.id, subtes),
+    sidikAda: new Set((await I.pertanyaanSubtes(paket.id, subtes)).map(N.sidikPertanyaan)),
   });
 
   if (hasil.errorFile) {
@@ -110,7 +110,7 @@ for (const { berkas, subtes } of NASKAH) {
     console.error(`    ! nomor ${b.nomor} (baris ${b.baris}): ${b.galat}`);
   }
 
-  const simpan = N.simpanNaskahIelts(paket.id, subtes, hasil, "lanjut");
+  const simpan = await N.simpanNaskahIelts(paket.id, subtes, hasil, "lanjut");
   total += simpan.disimpan;
   console.log(
     `  ${subtes.padEnd(10)} ${String(simpan.disimpan).padStart(2)} butir baru` +
@@ -122,7 +122,7 @@ for (const { berkas, subtes } of NASKAH) {
 /* ---------------- Ringkasan ---------------- */
 
 console.log("\nKelengkapan paket:");
-for (const r of I.ringkasPaket(paket.id)) {
+for (const r of await I.ringkasPaket(paket.id)) {
   const tanda = r.terisi >= r.target ? "OK  " : "BELUM";
   console.log(
     `  ${tanda} ${r.nama.padEnd(10)} ${String(r.terisi).padStart(2)}/${r.target} butir · ${r.menit} menit` +
@@ -135,4 +135,7 @@ console.log(
   "Rekaman Listening belum ada — unggah berkas suaranya lewat Admin → IELTS → paket → Listening,\n" +
     "atau bacakan transkrip yang sudah ikut tersimpan di tiap Recording.",
 );
-console.log(`Paket masih berstatus "${I.paketById(paket.id).status}". Terbitkan dari panel admin bila siap diujikan.`);
+console.log(
+  `Paket masih berstatus "${(await I.paketById(paket.id)).status}". Terbitkan dari panel admin bila siap diujikan.`,
+);
+process.exit(0);

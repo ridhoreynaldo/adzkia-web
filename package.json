@@ -42,9 +42,12 @@
     "impor:snpmb": "node scripts/impor-snpmb.mjs",
     "lengkapi:ambang": "node scripts/lengkapi-ambang.mjs",
     "seed:warung": "node scripts/seed-warung.mjs",
-    "seed:ielts": "node --conditions=react-server scripts/seed-ielts.mjs",
+    "seed:ielts": "node --env-file-if-exists=.env --conditions=react-server scripts/seed-ielts.mjs",
+    "seed:ielts11": "node --env-file-if-exists=.env --conditions=react-server scripts/seed-ielts-11sep.mjs",
     "naskah:ielts": "node --conditions=react-server scripts/naskah-ielts-berkas.mjs",
     "rekaman:ielts": "node --conditions=react-server scripts/rekaman-ielts.mjs",
+    "rekaman:demo": "node --env-file-if-exists=.env --conditions=react-server scripts/pasang-rekaman-demo.mjs",
+    "rekaman:ambil": "node scripts/ambil-rekaman-ielts.mjs",
     "ekspor:pg": "node --conditions=react-server scripts/ekspor-postgres.mjs",
     "cek:soal": "node scripts/cek-soal-warung.mjs",
     "cek:kosong": "node tests/paket-kosong-check.mjs",
@@ -59,7 +62,8 @@
     "start:prod": "node scripts/jalankan-produksi.mjs",
     "pgbouncer:lokal": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/pgbouncer-lokal.ps1",
     "cek:pgbouncer": "node --conditions=react-server tests/pgbouncer-check.mjs",
-    "migrasi": "node scripts/migrasi.mjs"
+    "migrasi": "node scripts/migrasi.mjs",
+    "ekspor:ielts": "node --env-file-if-exists=.env --conditions=react-server scripts/ekspor-paket-ielts.mjs"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

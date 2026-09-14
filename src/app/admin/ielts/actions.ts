@@ -14,6 +14,7 @@ import {
   pengerjaanDenganPeserta,
 } from "@/lib/ielts/ielts-penjagaan";
 import { hitungUlangIelts } from "@/lib/ielts/ielts-peringkat";
+import { GagalPasangBawaan, pasangPaketBawaan } from "@/lib/ielts/paket-bawaan";
 import {
   parseNaskahIelts,
   sidikPertanyaan,
@@ -232,6 +233,63 @@ export async function hapusPaketIeltsAction(formData: FormData): Promise<void> {
   await hapusPaket(id);
   revalidatePath("/admin/ielts");
   kembali("/admin/ielts", "pesan", "Paket beserta seluruh soalnya dihapus.");
+}
+
+/**
+ * Memasang paket IELTS bawaan aplikasi ke basis data server ini.
+ *
+ * Satu-satunya jalan masuk paket IELTS ke server yang dipasang lewat
+ * `git push`: naskah Word dan skrip penyemainya tidak ikut ke dalam citra
+ * Docker, jadi tanpa tombol ini paket hanya bisa dibangun oleh orang yang
+ * punya shell di servernya. Seluruh pertimbangannya ada di `paket-bawaan.ts`.
+ *
+ * Rekaman ditarik dari server lama saat tombol ditekan, jadi aksi ini
+ * memang lambat — puluhan megabyte lewat jaringan. Kegagalan mengunduh TIDAK
+ * membatalkan pemasangan isinya; yang gagal dilaporkan sebagai peringatan dan
+ * tombolnya bisa ditekan lagi.
+ */
+export async function pasangPaketBawaanAction(formData: FormData): Promise<void> {
+  await penjaga();
+  const kode = String(formData.get("kode") ?? "").trim();
+
+  const CARA = {
+    baru: "dipasang",
+    "susun-ulang": "disusun ulang",
+    lengkapi: "dilengkapi tanpa menghapus apa pun",
+  } as const;
+
+  let pesan: string;
+  try {
+    const h = await pasangPaketBawaan(kode);
+    const bagian = [
+      `${h.kode} ${CARA[h.mode]}`,
+      `${h.butir} butir baru`,
+      `${h.bagian} bagian`,
+      `${h.rekaman} rekaman`,
+    ];
+    if (h.dilewati > 0) {
+      bagian.push(`${h.dilewati} butir dilewati karena nomornya sudah terisi`);
+    }
+    if (h.mode === "lengkapi") {
+      bagian.push(`paket ini sudah dikerjakan ${h.pengerjaan} peserta`);
+    }
+    pesan = bagian.join(" · ") + ".";
+    if (h.peringatan.length > 0) {
+      pesan += ` ${h.peringatan.length} peringatan — ${h.peringatan[0]}`;
+    }
+  } catch (e) {
+    revalidatePath("/admin/ielts");
+    kembali(
+      "/admin/ielts",
+      "galat",
+      e instanceof GagalPasangBawaan || e instanceof GagalIelts
+        ? e.message
+        : `Paket bawaan gagal dipasang: ${e instanceof Error ? e.message : String(e)}`,
+    );
+  }
+
+  revalidatePath("/admin/ielts");
+  kembali("/admin/ielts", "pesan", pesan);
 }
 
 /**
